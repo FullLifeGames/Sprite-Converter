@@ -34,6 +34,7 @@
 				$nameToDex[trim($value["name"])."-Mega"] = $value["dex"]."-m";
 				$nameToDex[trim($value["name"])."-Mega-X"] = $value["dex"]."-mx";
 				$nameToDex[trim($value["name"])."-Mega-Y"] = $value["dex"]."-my";
+				$nameToDex[trim($value["name"])."-Therian"] = $value["dex"]."-s";
 			}
 		}
 		$list = array();
@@ -59,8 +60,23 @@
 				}
 				if(strpos($_POST["tier"], "sprites")!==false){
 					$name = trim($name);
-					echo "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . ".png<br>";
-					$list[] = "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . ".png";
+					if((strpos($name, "Arceus")!==false || strpos($name, "Basculin")!==false || strpos($name, "Gourgeist")!==false || strpos($name, "Pumpkaboo")!==false || strpos($name, "Pikachu")!==false) && strpos($name, "-")!==false){
+						$name = substr($name, 0, strpos($name, "-"));
+					}
+					if(!isset($nameToDex[$name]) && strpos($name, "-")!==false && (strpos($name, "Rotom")!==false || strpos($name, "Deoxys")!==false || strpos($name, "Giratina")!==false)){
+						$ext = strtolower(substr($name, strpos($name, "-") + 1, 1));
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . $ext . ".png<br>";
+						$list[] = "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else if(!isset($nameToDex[$name]) && strpos($name, "-")!==false){
+						$ext = strtolower(substr($name, strpos($name, "-"), 2));
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . $ext . ".png<br>";
+						$list[] = "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else {
+						echo "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . ".png<br>";
+						$list[] = "http://www.serebii.net/pokedex-xy/icon/" . $nameToDex[$name] . ".png";
+					}
 				} else {
 					echo "http://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext."<br>";
 					$list[] = "http://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext;
