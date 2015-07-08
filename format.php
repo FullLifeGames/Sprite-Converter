@@ -39,8 +39,9 @@
 		}
 		$list = array();
 		echo "Links: <br>";
-		foreach(preg_split('/\r\n|[\r\n]/',  $_POST["team"]) as $key => $value){
-			if(strpos($value, "@")!==false){
+		$import = preg_split('/\r\n|[\r\n]/',  $_POST["team"]);
+		foreach($import as $key => $value){
+			if(strpos($value, "@")!==false || strpos($import[$key+1], "Ability:") !== false){
 				$name = "";
 				if(strpos($value, "(M)")!==false || strpos($value, "(F)")!==false){
 					$value = str_replace("(M)", "" , $value);
@@ -49,7 +50,11 @@
 				if(strpos($value, "(")!==false){
 					$name = substr($value, strpos($value, "(") + 1, strpos($value, ")") - (strpos($value, "(") + 1));
 				} else {
-					$name = substr($value, 0, strpos($value, "@"));
+					if(strpos($value, "@")!==false){
+						$name = substr($value, 0, strpos($value, "@"));
+					} else {
+						$name = $value;
+					}
 				}
 				if(strpos($_POST["tier"], "sprites")===false){
 					$name = strtolower(trim($name));				
