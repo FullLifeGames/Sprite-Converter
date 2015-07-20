@@ -1,30 +1,42 @@
+<?php
+	if(isset($_POST["tier"])) $tier = $_POST["tier"]; else $tier = "";
+?>
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Sprite Converter</title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+	<h1>Sprite Converter</h1>
+			
+			<hr />
+			
+			<form action="" method="post">
+				<div class="form-group">
+					<label for="team">Import:</label>
+					<textarea class="form-control" name="team"><?php echo (isset($_POST["team"])?$_POST["team"]:'') ?></textarea>
+				</div>
+				<div class="form-group">
+					<label for="tier">Sprites:</label>
+					<select class="form-control" name="tier"> 
+						<option value="xyani" <?php echo (($tier == "xyani")?"selected":"") ?>>xyani</option>
+						<option value="bw" <?php echo (($tier == "bw")?"selected":"") ?>>bw</option>
+						<option value="bwani" <?php echo (($tier == "bwani")?"selected":"") ?>>bwani</option>
+						<option value="sprites" <?php echo (($tier == "sprites")?"selected":"") ?>>sprites</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<input class="btn btn-primary form-control" type="submit" value="Convert" />
+				</div>
+			</form>
+			<p>
 <?php	
 	if(!isset($_POST["team"]) && !isset($_POST["tier"])){
-		?>
-		<form action="" method="post">
-			<textarea name="team"></textarea>
-			<select name="tier"> 
-				<option value="xyani">xyani</option>
-				<option value="bw">bw</option>
-				<option value="bwani">bwani</option>
-				<option value="sprites">sprites</option>
-			</select>
-			<input type="submit" value="convert" />
-		</form>
-		<?php
 	} else {
-		?>
-		<form action="" method="post">
-			<textarea name="team"><?php echo $_POST["team"] ?></textarea>
-			<select name="tier"> 
-				<option value="xyani">xyani</option>
-				<option value="bw">bw</option>
-				<option value="bwani">bwani</option>
-				<option value="sprites">sprites</option>
-			</select>
-			<input type="submit" value="convert" />
-		</form>
-		<?php
 		if(strpos($_POST["tier"], "sprites")!==false){
 			$json = get_magic_quotes_gpc() ? stripslashes(file_get_contents("dexdata.json")) : file_get_contents("dexdata.json");
 			$json = json_decode($json,true);
@@ -41,7 +53,7 @@
 		echo "Links: <br>";
 		$import = preg_split('/\r\n|[\r\n]/',  $_POST["team"]);
 		foreach($import as $key => $value){
-			if(strpos($value, "@")!==false || strpos($import[$key+1], "Ability:") !== false){
+			if(strpos($value, "@")!==false || (isset($import[$key+1]) && strpos($import[$key+1], "Ability:") !== false)){
 				$name = "";
 				if(strpos($value, "(M)")!==false || strpos($value, "(F)")!==false){
 					$value = str_replace("(M)", "" , $value);
@@ -88,9 +100,13 @@
 				}
 			}
 		}
-		echo "BB Code: <br>";
+		echo "<br>BB Code: <br>";
 		foreach($list as $key => $value){
 			echo "[IMG]" . $value . "[/IMG]";
 		}
 	}
 ?>
+		</p>
+	</div>
+	</body>
+</html>
