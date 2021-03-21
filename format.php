@@ -7,10 +7,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Sprite Converter</title>
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<div class="container">
+        <a href="/" style="position:absolute;top:0;right:0;z-index:20;padding:5px;"><img border="0" alt="FullLifeGames" src="../../img/profile.jpg" width="100" height="100" /></a>
 	<h1>Sprite Converter</h1>
 			
 			<hr />
@@ -47,8 +50,10 @@
 				if(!isset($nameToDex[trim($value["name"])."-Mega"])) $nameToDex[trim($value["name"])."-Mega"] = $value["dex"]."-m";
 				if(!isset($nameToDex[trim($value["name"])."-Mega-X"])) $nameToDex[trim($value["name"])."-Mega-X"] = $value["dex"]."-mx";
 				if(!isset($nameToDex[trim($value["name"])."-Mega-Y"])) $nameToDex[trim($value["name"])."-Mega-Y"] = $value["dex"]."-my";
+				if(!isset($nameToDex[trim($value["name"])."-Primal"])) $nameToDex[trim($value["name"])."-Primal"] = $value["dex"]."-p";
 				if(!isset($nameToDex[trim($value["name"])."-Therian"])) $nameToDex[trim($value["name"])."-Therian"] = $value["dex"]."-s";
 			}
+			$nameToDex["Hoopa-Unbound"] = "720-u";
 		}
 		$list = array();
 		echo "Links: <br>";
@@ -61,7 +66,7 @@
 					$value = str_replace("(F)", "" , $value);
 				}
 				if(strpos($value, "(")!==false){
-					$name = substr($value, strpos($value, "(") + 1, strpos($value, ")") - (strpos($value, "(") + 1));
+					$name = substr($value, strrpos($value, "(") + 1, strrpos($value, ")") - (strrpos($value, "(") + 1));
 				} else {
 					if(strpos($value, "@")!==false){
 						$name = substr($value, 0, strpos($value, "@"));
@@ -70,7 +75,12 @@
 					}
 				}
 				if(strpos($_POST["tier"], "sprites")===false){
-					$name = strtolower(trim($name));				
+					$name = str_replace(' ', '', strtolower(trim($name)));			
+					$name = str_replace('%', '', $name);
+					$name = str_replace("'", '', $name);
+					if(strpos($name, "kommo-")!==false || strpos($name, "hakamo-")!==false || strpos($name, "jangmo-")!==false){
+						$name = str_replace('-', '', $name);
+					}
 					$ext = ".png";
 					if(strpos($_POST["tier"], "ani")!==false){
 						$ext = ".gif";
@@ -80,24 +90,39 @@
 					$name = trim($name);
 					if((strpos($name, "Arceus")!==false || strpos($name, "Basculin")!==false || strpos($name, "Gourgeist")!==false || strpos($name, "Pumpkaboo")!==false || strpos($name, "Pikachu")!==false) && strpos($name, "-")!==false && strpos($name, "-Alola") === false){
 						$name = substr($name, 0, strpos($name, "-"));
-					}
-					if(!isset($nameToDex[$name]) && strpos($name, "-")!==false && (strpos($name, "Rotom")!==false || strpos($name, "Deoxys")!==false || strpos($name, "Giratina")!==false)){
-						$ext = strtolower(substr($name, strpos($name, "-") + 1, 1));
+					}					
+					if(strpos($name, "-")!==false && strpos($name, "Rotom")!==false || strpos($name, "Deoxys")!==false || strpos($name, "Giratina")!==false){
+						if(strpos($name, "-Fan")!==false){
+							$ext = "s";			
+						} else {
+							$ext = strtolower(substr($name, strpos($name, "-") + 1, 1));
+						}
 						$name = substr($name, 0, strpos($name, "-"));
-						echo "http://www.serebii.net/pokedex-sm/icon/" . $nameToDex[$name] . $ext . ".png<br>";
-						$list[] = "http://www.serebii.net/pokedex-sm/icon/" . $nameToDex[$name] . $ext . ".png";
-					} else if(!isset($nameToDex[$name]) && strpos($name, "-")!==false){
+						echo "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . $ext . ".png<br>";
+						$list[] = "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else if(strpos($name, "-")!==false && strpos($name, "Necrozma")!==false){
+						$ext = strtolower(substr($name, strpos($name, "-") + 1, 1));
+						$ext .= strtolower(substr($name, strrpos($name, "-") + 1, 1));
+                                                $name = substr($name, 0, strpos($name, "-"));
+                                                echo "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . "-" . $ext . ".png<br>";
+                                                $list[] = "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . "-" . $ext . ".png";
+					} else if(strpos($name, "Zygarde-10%")!==false){
+						$ext = strtolower(substr($name, strpos($name, "-"), 3));
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . $ext . ".png<br>";
+						$list[] = "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else if((!isset($nameToDex[$name]) || strpos($name, "Oricorio")!==false) && strpos($name, "-")!==false){
 						$ext = strtolower(substr($name, strpos($name, "-"), 2));
 						$name = substr($name, 0, strpos($name, "-"));
-						echo "http://www.serebii.net/pokedex-sm/icon/" . $nameToDex[$name] . $ext . ".png<br>";
-						$list[] = "http://www.serebii.net/pokedex-sm/icon/" . $nameToDex[$name] . $ext . ".png";
+						echo "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . $ext . ".png<br>";
+						$list[] = "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . $ext . ".png";
 					} else {
-						echo "http://www.serebii.net/pokedex-sm/icon/" . $nameToDex[$name] . ".png<br>";
-						$list[] = "http://www.serebii.net/pokedex-sm/icon/" . $nameToDex[$name] . ".png";
+						echo "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . ".png<br>";
+						$list[] = "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . ".png";
 					}
 				} else {
-					echo "http://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext."<br>";
-					$list[] = "http://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext;
+					echo "https://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext."<br>";
+					$list[] = "https://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext;
 				}
 			}
 		}
