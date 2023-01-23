@@ -142,7 +142,7 @@
 						$list[] = "https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . ".png";
 					}
 				}
-				if(strpos($_POST["tier"], "sprites")!==false){
+				else if(strpos($_POST["tier"], "sprites")!==false){
 					$name = trim($name);
 					if((strpos($name, "Arceus")!==false || strpos($name, "Basculin")!==false || strpos($name, "Gourgeist")!==false || strpos($name, "Pumpkaboo")!==false || strpos($name, "Pikachu")!==false) && strpos($name, "-")!==false && strpos($name, "-Alola") === false){
 						$name = substr($name, 0, strpos($name, "-"));
