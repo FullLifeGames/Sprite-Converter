@@ -13,7 +13,12 @@
 </head>
 <body>
 	<div class="container">
-        <a href="/" style="position:absolute;top:0;right:0;z-index:20;padding:5px;"><img border="0" alt="FullLifeGames" src="../../img/profile.jpg" width="100" height="100" /></a>
+        <a href="/" style="position:absolute;top:0;right:0;z-index:20;padding:5px;"><img border="0" alt="Bene" src="../../img/profile.jpg" width="130" height="130" /></a>
+		<form action="https://www.paypal.com/donate" method="post" target="_top">
+			<input type="hidden" name="hosted_button_id" value="LSAEWSQK7NJBJ" />
+			<input style="position:absolute;top:135px;right:20px;z-index:20;padding:5px;" type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+			<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+		</form>
 	<h1>Sprite Converter</h1>
 			
 			<hr />
@@ -26,10 +31,15 @@
 				<div class="form-group">
 					<label for="tier">Sprites:</label>
 					<select class="form-control" name="tier"> 
-						<option value="xyani" <?php echo (($tier == "xyani")?"selected":"") ?>>xyani</option>
-						<option value="bw" <?php echo (($tier == "bw")?"selected":"") ?>>bw</option>
-						<option value="bwani" <?php echo (($tier == "bwani")?"selected":"") ?>>bwani</option>
-						<option value="sprites" <?php echo (($tier == "sprites")?"selected":"") ?>>sprites</option>
+						<option value="ani" <?php echo (($tier == "ani")?"selected":"") ?>>Animated</option>
+						<option value="ani-back" <?php echo (($tier == "ani-back")?"selected":"") ?>>Animated Back</option>
+						<option value="ani-shiny" <?php echo (($tier == "ani-shiny")?"selected":"") ?>>Animated Shiny</option>
+						<option value="ani-back-shiny" <?php echo (($tier == "ani-back-shiny")?"selected":"") ?>>Animated Shiny Back</option>
+						<option value="dex" <?php echo (($tier == "dex")?"selected":"") ?>>Dex (static)</option>
+						<option value="gen5" <?php echo (($tier == "gen5")?"selected":"") ?>>Gen 5 (static)</option>
+						<option value="gen5ani" <?php echo (($tier == "gen5ani")?"selected":"") ?>>Gen 5 Animated</option>
+						<option value="sprites" <?php echo (($tier == "sprites")?"selected":"") ?>>Sprites - Gen 6 - 8</option>
+						<option value="sprites9" <?php echo (($tier == "sprites9")?"selected":"") ?>>Sprites - Gen 9</option>
 					</select>
 				</div>
 				<div class="form-group">
@@ -41,18 +51,23 @@
 	if(!isset($_POST["team"]) && !isset($_POST["tier"])){
 	} else {
 		if(strpos($_POST["tier"], "sprites")!==false){
-			$json = get_magic_quotes_gpc() ? stripslashes(file_get_contents("dexdata.json")) : file_get_contents("dexdata.json");
+			$json = file_get_contents("dexdata.json");
 			$json = json_decode($json,true);
 			$nameToDex = array();
 			foreach($json as $key => $value){
-				if(!isset($nameToDex[trim($value["name"])])) $nameToDex[trim($value["name"])] = $value["dex"];
-				if(!isset($nameToDex[trim($value["name"])."-Alola"])) $nameToDex[trim($value["name"])."-Alola"] = $value["dex"]."-a";
-				if(!isset($nameToDex[trim($value["name"])."-Mega"])) $nameToDex[trim($value["name"])."-Mega"] = $value["dex"]."-m";
-				if(!isset($nameToDex[trim($value["name"])."-Mega-X"])) $nameToDex[trim($value["name"])."-Mega-X"] = $value["dex"]."-mx";
-				if(!isset($nameToDex[trim($value["name"])."-Mega-Y"])) $nameToDex[trim($value["name"])."-Mega-Y"] = $value["dex"]."-my";
-				if(!isset($nameToDex[trim($value["name"])."-Primal"])) $nameToDex[trim($value["name"])."-Primal"] = $value["dex"]."-p";
-				if(!isset($nameToDex[trim($value["name"])."-Therian"])) $nameToDex[trim($value["name"])."-Therian"] = $value["dex"]."-s";
+				if (!isset($nameToDex[trim($value["name"])])) $nameToDex[trim($value["name"])] = $value["dex"];
+				if (!isset($nameToDex[trim($value["name"]) . "-Mega-X"])) $nameToDex[trim($value["name"]) . "-Mega-X"] = $value["dex"] . "-mx";
+				if (!isset($nameToDex[trim($value["name"]) . "-Mega-Y"])) $nameToDex[trim($value["name"]) . "-Mega-Y"] = $value["dex"] . "-my";
+				if (!isset($nameToDex[trim($value["name"]) . "-Therian"])) $nameToDex[trim($value["name"]) . "-Therian"] = $value["dex"] . "-s";
+				if (!isset($nameToDex[trim($value["name"]) . "-Gmax"])) $nameToDex[trim($value["name"]) . "-Gmax"] = $value["dex"];
+
+				/* Probably not necessary due to the correct first letter
+					if (!isset($nameToDex[trim($value["name"]) . "-Alola"])) $nameToDex[trim($value["name"]) . "-Alola"] = $value["dex"] . "-a";
+					if (!isset($nameToDex[trim($value["name"]) . "-Mega"])) $nameToDex[trim($value["name"]) . "-Mega"] = $value["dex"] . "-m";
+					if (!isset($nameToDex[trim($value["name"]) . "-Primal"])) $nameToDex[trim($value["name"]) . "-Primal"] = $value["dex"] . "-p";
+				*/
 			}
+			
 			$nameToDex["Hoopa-Unbound"] = "720-u";
 		}
 		$list = array();
@@ -84,6 +99,47 @@
 					$ext = ".png";
 					if(strpos($_POST["tier"], "ani")!==false){
 						$ext = ".gif";
+					}
+				}
+				if(strpos($_POST["tier"], "sprites9")!==false){
+					$tag = "sv";
+					$name = trim($name);
+					if((strpos($name, "Arceus")!==false || strpos($name, "Basculin")!==false || strpos($name, "Gourgeist")!==false || strpos($name, "Pumpkaboo")!==false || strpos($name, "Pikachu")!==false) && strpos($name, "-")!==false && strpos($name, "-Alola") === false){
+						$name = substr($name, 0, strpos($name, "-"));
+					}
+					if(strpos($name, "-")!==false && (strpos($name, "Rotom")!==false || strpos($name, "Deoxys")!==false || strpos($name, "Giratina")!==false)){
+						if(strpos($name, "-Fan")!==false){
+							$ext = "s";
+						} else {
+							$ext = strtolower(substr($name, strpos($name, "-") + 1, 1));
+						}
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "<img src='https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . $ext . ".png'></img>";
+						$list[] = "https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else if(strpos($name, "-")!==false && strpos($name, "Necrozma")!==false){
+						$ext = strtolower(substr($name, strpos($name, "-") + 1, 1));
+						if(strpos($name, "Ultra")===false){
+							$ext .= strtolower(substr($name, strrpos($name, "-") + 1, 1));
+						}
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "<img src='https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . "-" . $ext . ".png'></img>";
+						$list[] = "https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . "-" . $ext . ".png";
+					} else if(strpos($name, "Zygarde-10%")!==false){
+						$ext = strtolower(substr($name, strpos($name, "-"), 3));
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "<img src='https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . $ext . ".png'></img>";
+						$list[] = "https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else if((!isset($nameToDex[$name]) || strpos($name, "Oricorio")!==false) && strpos($name, "-")!==false){
+						$ext = strtolower(substr($name, strpos($name, "-"), 2));
+						$name = substr($name, 0, strpos($name, "-"));
+						echo "<img src='https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . $ext . ".png'></img>";
+						$list[] = "https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . $ext . ".png";
+					} else if(!isset($nameToDex[$name])) {
+						echo "<img src='https://www.serebii.net/pokedex/icon/human.png'></img>";
+						$list[] = "https://www.serebii.net/pokedex/icon/human.png";
+					} else {
+						echo "<img src='https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . ".png'></img>";
+						$list[] = "https://www.serebii.net/pokedex-" . $tag . "/icon/" . $nameToDex[$name] . ".png";
 					}
 				}
 				if(strpos($_POST["tier"], "sprites")!==false){
