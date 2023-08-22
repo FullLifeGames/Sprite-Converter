@@ -38,6 +38,7 @@
 						<option value="dex" <?php echo (($tier == "dex")?"selected":"") ?>>Dex (static)</option>
 						<option value="gen5" <?php echo (($tier == "gen5")?"selected":"") ?>>Gen 5 (static)</option>
 						<option value="gen5ani" <?php echo (($tier == "gen5ani")?"selected":"") ?>>Gen 5 Animated</option>
+						<option value="smogon" <?php echo (($tier == "smogon")?"selected":"") ?>>Smogon</option>
 						<option value="sprites" <?php echo (($tier == "sprites")?"selected":"") ?>>Sprites - Gen 6 - 8</option>
 						<option value="sprites9" <?php echo (($tier == "sprites9")?"selected":"") ?>>Sprites - Gen 9</option>
 					</select>
@@ -89,7 +90,7 @@
 						$name = $value;
 					}
 				}
-				if(strpos($_POST["tier"], "sprites")===false){
+				if(strpos($_POST["tier"], "sprites")===false && strpos($_POST["tier"], "smogon")===false){
 					$name = str_replace(' ', '', strtolower(trim($name)));			
 					$name = str_replace('%', '', $name);
 					$name = str_replace("'", '', $name);
@@ -176,6 +177,8 @@
 						echo "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . ".png<br>";
 						$list[] = "https://www.serebii.net/pokedex-swsh/icon/" . $nameToDex[$name] . ".png";
 					}
+				} else if(strpos($_POST["tier"], "smogon")!==false) {
+					$list[] = trim($name);
 				} else {
 					echo "https://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext."<br>";
 					$list[] = "https://play.pokemonshowdown.com/sprites/". htmlentities($_POST["tier"]) . "/".htmlentities($name).$ext;
@@ -184,7 +187,11 @@
 		}
 		echo "<br>BB Code: <br>";
 		foreach($list as $key => $value){
-			echo "[IMG]" . $value . "[/IMG]";
+			if(strpos($_POST["tier"], "smogon")!==false) {
+			echo ":" . $value . ":";
+			} else {
+				echo "[IMG]" . $value . "[/IMG]";
+			}
 		}
 	}
 ?>
